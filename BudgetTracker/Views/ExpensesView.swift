@@ -80,7 +80,7 @@ struct ExpensesView: View {
                     if !viewModel.transactions.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                ForEach(viewModel.transactions.filter { $0.type == "expense" }.prefix(4), id: \.id) { entry in
+                                ForEach(viewModel.transactions.filter { $0.type.rawValue == TransactionType.expense.rawValue }.prefix(4), id: \.id) { entry in
                                     ExpenseCard(category: entry.category, amount: entry.amount)
                                 }
                             }
@@ -158,7 +158,7 @@ struct DeleteExpenseView: View {
                 .padding()
             
             List {
-                ForEach(viewModel.transactions.filter { $0.type == "expense" }, id: \.id) { entry in
+                ForEach(viewModel.transactions.filter { $0.type.rawValue == TransactionType.expense.rawValue }, id: \.id) { entry in
                     VStack(alignment: .leading, spacing: 10) {
                         Text(entry.category)
                             .font(.title2)

@@ -71,7 +71,7 @@ struct IncomeView: View {
                 if !viewModel.transactions.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(viewModel.transactions.filter { $0.type == "income" }.prefix(4), id: \.id) { entry in
+                            ForEach(viewModel.transactions.filter { $0.type.rawValue == TransactionType.income.rawValue }.prefix(4), id: \.id) { entry in
                                 IncomeCard(category: entry.category, amount: entry.amount)
                             }
                         }
@@ -132,7 +132,7 @@ struct DeleteIncomeView: View {
                 .padding()
             
             List {
-                ForEach(viewModel.transactions.filter { $0.type == "income" }, id: \.id) { entry in
+                ForEach(viewModel.transactions.filter { $0.type.rawValue == TransactionType.income.rawValue }, id: \.id) { entry in
                     VStack(alignment: .leading, spacing: 10) {
                         Text(entry.category)
                             .font(.title2)

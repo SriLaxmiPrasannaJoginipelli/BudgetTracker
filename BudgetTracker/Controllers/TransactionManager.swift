@@ -7,20 +7,27 @@
 
 import Foundation
 
-class TransactionManager{
+protocol TransactionService {
+    func addIncome(amount: Double, category: String, to transactions: inout [Transaction])
+    func addExpense(amount: Double, category: String, to transactions: inout [Transaction])
+    func deleteIncome(with id: UUID, from transactions:  inout [Transaction])
+    func deleteExpense(with id: UUID, from transactions: inout [Transaction])
+}
+
+class TransactionManager : TransactionService{
     
     
     func totalIncome(from transactions: [Transaction]) -> Double {
-        transactions.filter { $0.type == "income" }.map { $0.amount }.reduce(0, +)
+        transactions.filter { $0.type.rawValue == TransactionType.income.rawValue }.map { $0.amount }.reduce(0, +)
     }
     
     func totalExpenses(from transactions: [Transaction]) -> Double {
-        transactions.filter { $0.type == "expense" }.map { $0.amount }.reduce(0, +)
+        transactions.filter { $0.type.rawValue == TransactionType.expense.rawValue }.map { $0.amount }.reduce(0, +)
     }
     
     func incomeBreakdown(from transactions: [Transaction]) -> [String: Double] {
         var breakdown = [String: Double]()
-        for transaction in transactions.filter({ $0.type == "income" }) {
+        for transaction in transactions.filter({ $0.type.rawValue == TransactionType.income.rawValue }) {
             breakdown[transaction.category, default: 0] += transaction.amount
         }
         return breakdown
@@ -28,14 +35,14 @@ class TransactionManager{
     
     func expenseBreakdown(from transactions: [Transaction]) -> [String: Double] {
         var breakdown = [String: Double]()
-        for transaction in transactions.filter({ $0.type == "expense" }) {
+        for transaction in transactions.filter({ $0.type.rawValue == TransactionType.expense.rawValue }) {
             breakdown[transaction.category, default: 0] += transaction.amount
         }
         return breakdown
     }
     
     func addIncome(amount: Double, category: String, to transactions: inout [Transaction]) {
-        let newTransaction = Transaction(id: UUID(), amount: amount, category: category, date: Date(), type: "income")
+        let newTransaction = Transaction(id: UUID(), amount: amount, category: category, date: Date(), type: TransactionType(rawValue: TransactionType.income.rawValue) ?? TransactionType.income)
         transactions.append(newTransaction)
     }
     
@@ -45,7 +52,7 @@ class TransactionManager{
     }
     
     func addExpense(amount: Double, category: String, to transactions: inout [Transaction]) {
-        let newTransaction = Transaction(id: UUID(), amount: amount, category: category, date: Date(), type: "expense")
+        let newTransaction = Transaction(id: UUID(), amount: amount, category: category, date: Date(), type: TransactionType(rawValue: TransactionType.expense.rawValue) ?? TransactionType.expense)
         transactions.append(newTransaction)
     }
     

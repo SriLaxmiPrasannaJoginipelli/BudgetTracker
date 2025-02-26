@@ -7,11 +7,15 @@
 
 import Foundation
 
+enum TransactionType: String, Codable {
+    case income
+    case expense
+}
 
 struct Transaction : Identifiable, Codable {
     var id: UUID
     var amount: Double
     var category: String
     var date: Date
-    var type: String// "income" or "expense"
+    var type: TransactionType// "income" or "expense"
 }

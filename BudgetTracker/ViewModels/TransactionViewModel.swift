@@ -39,17 +39,17 @@ class TransactionViewModel: ObservableObject {
     
     
     @Published var transactions: [Transaction] = [
-        Transaction(id: UUID(), amount: 500.0, category: "Salary", date: Date(), type: "income"),
-        Transaction(id: UUID(), amount: 50.0, category: "Groceries", date: Date(), type: "expense"),
-        Transaction(id: UUID(), amount: 100.0, category: "Rent", date: Date(), type: "expense"),
-        Transaction(id: UUID(), amount: 20.0, category: "Entertainment", date: Date(), type: "expense"),
-        Transaction(id: UUID(), amount: 200.0, category: "Freelance", date: Date(), type: "income"),
-        Transaction(id: UUID(), amount: 100.0, category: "ExtraHours", date: Date(), type: "income"),
-        Transaction(id: UUID(), amount: 200.0, category: "Business", date: Date(), type: "income"),
-        Transaction(id: UUID(), amount: 700.0, category: "SocialMedia", date: Date(), type: "income"),
-        Transaction(id: UUID(), amount: 100.0, category: "ExtraHours-1", date: Date(), type: "income"),
-        Transaction(id: UUID(), amount: 200.0, category: "Business-2", date: Date(), type: "income"),
-        Transaction(id: UUID(), amount: 700.0, category: "SocialMedia-2", date: Date(), type: "income"),
+        Transaction(id: UUID(), amount: 500.0, category: "Salary", date: Date(), type: TransactionType.income),
+        Transaction(id: UUID(), amount: 50.0, category: "Groceries", date: Date(), type: TransactionType.expense),
+        Transaction(id: UUID(), amount: 100.0, category: "Rent", date: Date(), type: TransactionType.expense),
+        Transaction(id: UUID(), amount: 20.0, category: "Entertainment", date: Date(), type: TransactionType.expense),
+        Transaction(id: UUID(), amount: 200.0, category: "Freelance", date: Date(), type: TransactionType.income),
+        Transaction(id: UUID(), amount: 100.0, category: "ExtraHours", date: Date(), type: TransactionType.income),
+        Transaction(id: UUID(), amount: 200.0, category: "Business", date: Date(), type: TransactionType.income),
+        Transaction(id: UUID(), amount: 700.0, category: "SocialMedia", date: Date(), type: TransactionType.income),
+        Transaction(id: UUID(), amount: 100.0, category: "ExtraHours-1", date: Date(), type: TransactionType.income),
+        Transaction(id: UUID(), amount: 200.0, category: "Business-2", date: Date(), type: TransactionType.income),
+        Transaction(id: UUID(), amount: 700.0, category: "SocialMedia-2", date: Date(), type: TransactionType.income),
     ]
     
     // Formatted data for Pie Charts

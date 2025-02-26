@@ -9,10 +9,6 @@ import SwiftUI
 import Foundation
 import Charts
 
-enum TransactionType: String {
-    case income = "income"
-    case expense = "expense"
-}
 
 struct HomeView: View {
     @ObservedObject var viewModel: TransactionViewModel
@@ -91,7 +87,7 @@ struct TransactionRow: View {
                 .font(.headline)
             Spacer()
             Text("$\(transaction.amount, specifier: "%.2f")")
-                .foregroundColor(transaction.type == TransactionType.expense.rawValue ? .red : .green)
+                .foregroundColor(transaction.type.rawValue == TransactionType.expense.rawValue ? .red : .green)
         }
         .padding(.vertical, 5)
     }
