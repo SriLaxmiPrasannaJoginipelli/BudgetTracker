@@ -166,6 +166,8 @@ struct AddIncomeView: View {
     @ObservedObject var viewModel: TransactionViewModel
     @State private var incomeAmount: String = ""
     @State private var incomeCategory: String = ""
+    @State private var isRecurring: Bool = false
+    @State private var recurrenceInterval: RecurrenceInterval = .monthly
     @Environment(\ .presentationMode) var presentationMode
     
     var body: some View {
@@ -182,6 +184,19 @@ struct AddIncomeView: View {
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(8)
+                
+                Toggle("Recurring Transaction", isOn: $isRecurring)
+                    .padding()
+                
+                if isRecurring {
+                    Picker("Recurrence Interval", selection: $recurrenceInterval) {
+                        Text("Daily").tag(RecurrenceInterval.daily)
+                        Text("Weekly").tag(RecurrenceInterval.weekly)
+                        Text("Monthly").tag(RecurrenceInterval.monthly)
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .padding()
+                }
                 
                 Button(action: addIncome) {
                     Text("Save")
@@ -207,7 +222,16 @@ struct AddIncomeView: View {
     
     private func addIncome() {
         guard let amount = Double(incomeAmount), !incomeCategory.isEmpty else { return }
-        viewModel.addIncome(amount: amount, category: incomeCategory)
+        let newTransaction = Transaction(
+            id: UUID(),
+            amount: amount,
+            category: incomeCategory,
+            date: Date(),
+            type: TransactionType.income,
+            isRecurring: isRecurring,
+            recurrenceInterval: isRecurring ? recurrenceInterval : nil
+        )
+        viewModel.addIncome(transaction: newTransaction)
         presentationMode.wrappedValue.dismiss()
     }
 }

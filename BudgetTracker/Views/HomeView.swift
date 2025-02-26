@@ -78,20 +78,27 @@ struct HomeView: View {
     }
 }
 
-struct TransactionRow: View {
-    let transaction: Transaction
-
-    var body: some View {
-        HStack {
-            Text(transaction.category)
-                .font(.headline)
-            Spacer()
-            Text("$\(transaction.amount, specifier: "%.2f")")
-                .foregroundColor(transaction.type.rawValue == TransactionType.expense.rawValue ? .red : .green)
-        }
-        .padding(.vertical, 5)
-    }
-}
+//struct TransactionRow: View {
+//    let transaction: Transaction
+//
+//    var body: some View {
+//        HStack {
+//            VStack(alignment: .leading, spacing: 5) {
+//                Text(transaction.category)
+//                    .font(.headline)
+//                if transaction.isRecurring, let interval = transaction.recurrenceInterval {
+//                    Text(interval.rawValue.capitalized)
+//                        .font(.caption)
+//                        .foregroundColor(.gray)
+//                }
+//            }
+//            Spacer()
+//            Text("$\(transaction.amount, specifier: "%.2f")")
+//                .foregroundColor(transaction.type.rawValue == "expense" ? .red : .green)
+//        }
+//        .padding(.vertical, 5)
+//    }
+//}
 
 //#Preview {
 //    HomeView()

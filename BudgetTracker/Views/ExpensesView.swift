@@ -15,6 +15,7 @@ struct ExpensesView: View {
     @State var deleteExpense = false
     @State private var showAlertForBudget = false
     @State private var outOfBudget = false
+    @State private var isRecurring: Bool = false
     
     var body: some View {
         NavigationView {
@@ -129,6 +130,7 @@ struct ExpensesView: View {
 }
 
 
+
 struct ExpenseCard: View {
     var category: String
     var amount: Double
@@ -146,6 +148,7 @@ struct ExpenseCard: View {
         .background(RoundedRectangle(cornerRadius: 10).fill(Color.white).shadow(radius: 2))
     }
 }
+
 
 struct DeleteExpenseView: View {
     @ObservedObject var viewModel: TransactionViewModel
@@ -188,10 +191,14 @@ struct DeleteExpenseView: View {
     }
 }
 
+
+
 struct AddExpenseView: View {
     @ObservedObject var viewModel: TransactionViewModel
     @State private var expenseAmount: String = ""
     @State private var expenseCategory: String = ""
+    @State private var isRecurring: Bool = false
+    @State private var recurrenceInterval: RecurrenceInterval = .monthly
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -208,6 +215,19 @@ struct AddExpenseView: View {
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(8)
+                
+                Toggle("Recurring Transaction", isOn: $isRecurring)
+                    .padding()
+                
+                if isRecurring {
+                    Picker("Recurrence Interval", selection: $recurrenceInterval) {
+                        Text("Daily").tag(RecurrenceInterval.daily)
+                        Text("Weekly").tag(RecurrenceInterval.weekly)
+                        Text("Monthly").tag(RecurrenceInterval.monthly)
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .padding()
+                }
                 
                 Button(action: addExpense) {
                     Text("Save")
@@ -235,7 +255,18 @@ struct AddExpenseView: View {
     
     private func addExpense() {
         guard let amount = Double(expenseAmount), !expenseCategory.isEmpty else { return }
-        viewModel.addExpense(amount: amount, category: expenseCategory)
+        let newTransaction = Transaction(
+                    id: UUID(),
+                    amount: amount,
+                    category: expenseCategory,
+                    date: Date(),
+                    type: TransactionType.expense,
+                    isRecurring: isRecurring,
+                    recurrenceInterval: isRecurring ? recurrenceInterval : nil
+                )
+        
+        viewModel.addExpense(transaction: newTransaction)
+        //viewModel.addExpense(amount: amount, category: expenseCategory)
         presentationMode.wrappedValue.dismiss()
     }
 }
@@ -290,10 +321,10 @@ struct AddBudgetView: View {
                     .fontWeight(.regular)
                     .foregroundColor(.white)
                 
-//                Text("\(String(describing: currentMonth()))")
-//                    .font(.headline)
-//                    .fontWeight(.bold)
-//                    .foregroundColor(.white)
+                //                Text("\(String(describing: currentMonth()))")
+                //                    .font(.headline)
+                //                    .fontWeight(.bold)
+                //                    .foregroundColor(.white)
             }
             .padding()
         }

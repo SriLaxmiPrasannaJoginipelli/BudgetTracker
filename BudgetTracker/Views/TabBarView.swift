@@ -26,9 +26,9 @@ struct TabBarView: View {
                 .tabItem {
                     Label("Expenses", systemImage: "cart.fill")
                 }
-            ProfileView()
+            RecurringTransactionsView(viewModel: viewModel)
                 .tabItem {
-                    Label("Profile", systemImage: "person.fill")
+                    Label("Recurring", systemImage: "repeat")
                 }
         }
         

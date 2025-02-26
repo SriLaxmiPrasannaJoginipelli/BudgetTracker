@@ -39,17 +39,17 @@ class TransactionViewModel: ObservableObject {
     
     
     @Published var transactions: [Transaction] = [
-        Transaction(id: UUID(), amount: 500.0, category: "Salary", date: Date(), type: TransactionType.income),
-        Transaction(id: UUID(), amount: 50.0, category: "Groceries", date: Date(), type: TransactionType.expense),
-        Transaction(id: UUID(), amount: 100.0, category: "Rent", date: Date(), type: TransactionType.expense),
-        Transaction(id: UUID(), amount: 20.0, category: "Entertainment", date: Date(), type: TransactionType.expense),
-        Transaction(id: UUID(), amount: 200.0, category: "Freelance", date: Date(), type: TransactionType.income),
-        Transaction(id: UUID(), amount: 100.0, category: "ExtraHours", date: Date(), type: TransactionType.income),
-        Transaction(id: UUID(), amount: 200.0, category: "Business", date: Date(), type: TransactionType.income),
-        Transaction(id: UUID(), amount: 700.0, category: "SocialMedia", date: Date(), type: TransactionType.income),
-        Transaction(id: UUID(), amount: 100.0, category: "ExtraHours-1", date: Date(), type: TransactionType.income),
-        Transaction(id: UUID(), amount: 200.0, category: "Business-2", date: Date(), type: TransactionType.income),
-        Transaction(id: UUID(), amount: 700.0, category: "SocialMedia-2", date: Date(), type: TransactionType.income),
+        Transaction(id: UUID(), amount: 500.0, category: "Salary", date: Date(), type: TransactionType.income, isRecurring: false),
+        Transaction(id: UUID(), amount: 50.0, category: "Groceries", date: Date(), type: TransactionType.expense, isRecurring: false),
+        Transaction(id: UUID(), amount: 100.0, category: "Rent", date: Date(), type: TransactionType.expense, isRecurring: false),
+        Transaction(id: UUID(), amount: 20.0, category: "Entertainment", date: Date(), type: TransactionType.expense, isRecurring: false),
+        Transaction(id: UUID(), amount: 200.0, category: "Freelance", date: Date(), type: TransactionType.income, isRecurring: false),
+        Transaction(id: UUID(), amount: 100.0, category: "ExtraHours", date: Date(), type: TransactionType.income, isRecurring: false),
+        Transaction(id: UUID(), amount: 200.0, category: "Business", date: Date(), type: TransactionType.income, isRecurring: false),
+        Transaction(id: UUID(), amount: 700.0, category: "SocialMedia", date: Date(), type: TransactionType.income, isRecurring: false),
+        Transaction(id: UUID(), amount: 100.0, category: "ExtraHours-1", date: Date(), type: TransactionType.income, isRecurring: false),
+        Transaction(id: UUID(), amount: 200.0, category: "Business-2", date: Date(), type: TransactionType.income, isRecurring: false),
+        Transaction(id: UUID(), amount: 700.0, category: "SocialMedia-2", date: Date(), type: TransactionType.income, isRecurring: false),
     ]
     
     // Formatted data for Pie Charts
@@ -79,14 +79,26 @@ class TransactionViewModel: ObservableObject {
         expenseBreakdown.max{ $0.value < $1.value}?.key
     }
     
-    func addIncome(amount: Double, category: String) {
-        transactionManager.addIncome(amount: amount, category: category, to: &transactions)
+    //    func addIncome(amount: Double, category: String) {
+    //        transactionManager.addIncome(amount: amount, category: category, to: &transactions)
+    //        saveTransactions()
+    //        updateBalance()
+    //    }
+    
+    //    func addExpense(amount: Double, category: String) {
+    //        transactionManager.addExpense(amount: amount, category: category, to: &transactions)
+    //        saveTransactions()
+    //        updateBalance()
+    //    }
+    
+    func addIncome(transaction: Transaction) {
+        transactionManager.addIncome(transaction: transaction, to: &transactions)
         saveTransactions()
         updateBalance()
     }
     
-    func addExpense(amount: Double, category: String) {
-        transactionManager.addExpense(amount: amount, category: category, to: &transactions)
+    func addExpense(transaction: Transaction) {
+        transactionManager.addExpense(transaction: transaction, to: &transactions)
         saveTransactions()
         updateBalance()
     }
@@ -110,10 +122,14 @@ class TransactionViewModel: ObservableObject {
         }
     }
     
+    
     func fetchTransactions() {
         if let data = UserDefaults.standard.data(forKey: userDefaultsKey) {
             do {
-                transactions = try JSONDecoder().decode([Transaction].self, from: data)
+                var savedTransactions = try JSONDecoder().decode([Transaction].self, from: data)
+                let recurringTransactions = transactionManager.generateRecurringTransactions(from: savedTransactions)
+                savedTransactions.append(contentsOf: recurringTransactions)
+                transactions = savedTransactions
             } catch {
                 print("Failed to decode transactions: \(error)")
             }
@@ -148,10 +164,10 @@ class TransactionViewModel: ObservableObject {
     }
     
     func fetchBalance() {
-            if let savedBalance = UserDefaults.standard.value(forKey: balanceUserDefaultsKey) as? Double {
-                balance = savedBalance
-            }
+        if let savedBalance = UserDefaults.standard.value(forKey: balanceUserDefaultsKey) as? Double {
+            balance = savedBalance
         }
+    }
     
     // Method to calculate the remaining budget
     func remainingBudget() -> Double {
@@ -168,6 +184,29 @@ class TransactionViewModel: ObservableObject {
         showAlertForBudget = remainingBudget < 200
         
         return remainingBudget
+    }
+    
+    var recurringExpenses: [Transaction] {
+        transactions.filter { $0.type == .expense && $0.isRecurring }
+    }
+    
+    // Computed property for non-recurring expenses
+    var nonRecurringExpenses: [Transaction] {
+        transactions.filter { $0.type == .expense && !$0.isRecurring }
+    }
+    
+    var recurringIncome: [Transaction] {
+        transactions.filter { $0.type == .income && $0.isRecurring }
+    }
+    
+    func deleteRecurringTransaction(at offsets: IndexSet, isExpense: Bool) {
+        let filteredTransactions = isExpense ? recurringExpenses : recurringIncome
+        for index in offsets {
+            let transaction = filteredTransactions[index]
+            transactions.removeAll { $0.id == transaction.id }
+        }
+        saveTransactions()
+        updateBalance()
     }
     
     
