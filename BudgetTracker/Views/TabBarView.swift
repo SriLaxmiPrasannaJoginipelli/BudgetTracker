@@ -18,11 +18,11 @@ struct TabBarView: View {
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
-            IncomeView()
+            IncomeView(viewModel: viewModel)
                 .tabItem {
                     Label("Income", systemImage: "dollarsign.circle.fill")
                 }
-            ExpensesView()
+            ExpensesView(viewModel: viewModel)
                 .tabItem {
                     Label("Expenses", systemImage: "cart.fill")
                 }

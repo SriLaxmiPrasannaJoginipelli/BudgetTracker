@@ -10,7 +10,7 @@ import Charts
 
 
 struct ExpensesView: View {
-    @StateObject private var viewModel = TransactionViewModel()
+    @StateObject var viewModel : TransactionViewModel
     @State var showAddExpenseView = false
     @State var deleteExpense = false
     @State private var showAlertForBudget = false

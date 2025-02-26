@@ -7,7 +7,7 @@ import SwiftUI
 import Charts
 
 struct IncomeView: View {
-    @StateObject private var viewModel = TransactionViewModel()
+    @StateObject var viewModel : TransactionViewModel
     @State var showAddIncomeView = false
     @State var deleteIncome = false
     
