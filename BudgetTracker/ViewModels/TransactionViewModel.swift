@@ -105,21 +105,30 @@ class TransactionViewModel: ObservableObject {
     
     
     func deleteIncome(at offsets: IndexSet) {
-        for index in offsets {
-            let transaction = transactions[index]
-            transactionManager.deleteIncome(with: transaction.id, from: &transactions)
-            saveTransactions()
-            updateBalance()
+        // Filter income transactions
+        let incomeTransactions = transactions.filter { $0.type == .income }
+        
+        offsets.forEach { index in
+
+            transactionManager.deleteIncome(with: incomeTransactions[index].id, from: &transactions)
         }
+        
+        saveTransactions()
+        updateBalance()
     }
     
     func deleteExpense(at offsets: IndexSet) {
-        for index in offsets {
-            let transaction = transactions[index]
-            transactionManager.deleteExpense(with: transaction.id, from: &transactions)
-            saveTransactions()
-            updateBalance()
+        // Filter expense transactions
+        let expenseTransactions = transactions.filter { $0.type == .expense }
+        
+        
+        offsets.forEach { index in
+            transactionManager.deleteExpense(with: expenseTransactions[index].id, from: &transactions)
+            
         }
+        
+        saveTransactions()
+        updateBalance()
     }
     
     
